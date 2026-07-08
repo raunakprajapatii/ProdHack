@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fredericka+the+Great&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredericka+the+Great&family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@600;700;800&display=swap');
 
 body, h1, h2, h3, h4, h5, h6, p {
   margin: 0;
@@ -384,4 +384,345 @@ button {
 .footer-copy {
   color: #1a0d2e;
   font-size: 1.125rem;
+}
+/* Neon gaming refresh */
+
+.homepage {
+  font-family: 'Inter', system-ui, sans-serif;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(0, 245, 255, 0.28), transparent 28%),
+    radial-gradient(circle at 78% 8%, rgba(255, 46, 247, 0.24), transparent 24%),
+    linear-gradient(135deg, #050712 0%, #0c1024 48%, #13071d 100%);
+  color: #f8fbff;
+}
+
+.header {
+  background: rgba(5, 7, 18, 0.78);
+  border-bottom: 1px solid rgba(0, 245, 255, 0.22);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.32);
+}
+
+.header-scrolled { background: rgba(5, 7, 18, 0.94); }
+.header-container { gap: 1.5rem; }
+.header-container > h1,
+.hero-title,
+.stats-title,
+.cta-title,
+.footer-logo h2,
+.feature-title {
+  font-family: 'Orbitron', 'Inter', sans-serif;
+  letter-spacing: 0;
+}
+
+.header-container > h1 { color: #ffffff; font-size: 1.45rem; }
+.logo-img { height: 54px; filter: drop-shadow(0 0 16px rgba(0, 245, 255, 0.38)); }
+.nav { gap: 1rem; flex-wrap: wrap; justify-content: flex-end; }
+.nav-link { color: #dbeafe; font-family: 'Inter', sans-serif; font-size: 0.95rem; text-shadow: none; }
+.nav-link:hover { color: #67e8f9; }
+.nav-underline { background: #ff2ef7; }
+.main { padding-top: 5.5rem; }
+.hero { min-height: 92vh; padding: 4rem 1.25rem 2rem; position: relative; overflow: hidden; }
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 7rem 7% auto;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,245,255,.65), rgba(255,46,247,.55), transparent);
+}
+.hero-title { color: #ffffff; text-shadow: 0 0 34px rgba(0, 245, 255, 0.24); }
+.gradient-text { background: linear-gradient(90deg, #67e8f9, #ff2ef7, #facc15); -webkit-background-clip: text; background-clip: text; }
+.hero-subtitle { color: #c7d2fe; -webkit-text-stroke: 0; font-family: 'Inter', sans-serif; text-shadow: none; }
+.btn-primary,
+.btn-secondary {
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+.btn-primary {
+  background: linear-gradient(135deg, #00f5ff, #7c3aed 50%, #ff2ef7);
+  box-shadow: 0 0 24px rgba(0, 245, 255, 0.28), inset 0 0 0 1px rgba(255,255,255,.18);
+}
+.btn-secondary { border-color: rgba(103, 232, 249, .8); color: #67e8f9; background: rgba(8, 13, 30, .72); }
+.btn-secondary:hover { background: rgba(0, 245, 255, .12); color: #ffffff; }
+.features { width: min(1120px, 100%); }
+.feature-card,
+.stats,
+.footer,
+.cta-container {
+  background: rgba(8, 13, 30, 0.78);
+  border: 1px solid rgba(103, 232, 249, 0.18);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.34);
+  backdrop-filter: blur(18px);
+}
+.feature-card { border-radius: 8px; }
+.feature-icon { border-radius: 8px; box-shadow: 0 0 28px rgba(0,245,255,.22); }
+.feature-pink { background: linear-gradient(135deg, #ff2ef7, #7c3aed); }
+.feature-blue { background: linear-gradient(135deg, #00f5ff, #2563eb); }
+.feature-yellow { background: linear-gradient(135deg, #facc15, #f97316); }
+.icon-white { color: #ffffff; }
+.feature-title, .feature-desc, .stats-title, .stat-label, .cta-title, .cta-subtitle, .footer-text, .footer-copy, .footer-link { color: #e5edff; }
+.stat-number { color: #67e8f9; text-shadow: 0 0 22px rgba(0,245,255,.34); font-family: 'Orbitron', sans-serif; }
+.cta-container { padding: 3rem 1.25rem; border-radius: 8px; }
+.footer { border-top: 1px solid rgba(255, 46, 247, 0.22); }
+.footer-title { color: #ff8bf9; }
+.footer-bottom { border-top-color: rgba(103, 232, 249, 0.24); }
+.inline-icon, .inline-icon-lg { vertical-align: middle; margin-right: .45rem; }
+
+@media (max-width: 760px) {
+  .header { position: static; }
+  .header-container { padding: 1rem; align-items: flex-start; flex-direction: column; }
+  .nav { justify-content: flex-start; gap: .75rem; }
+  .main { padding-top: 0; }
+  .hero { min-height: auto; padding-top: 3rem; }
+  .hero-buttons { margin-bottom: 2rem; }
+}
+
+
+/* Account settings */
+.account-menu {
+  position: relative;
+}
+
+.account-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-height: 44px;
+  max-width: 240px;
+  padding: 0.35rem 0.6rem 0.35rem 0.35rem;
+  border-radius: 8px;
+  background: rgba(8, 13, 30, 0.8);
+  border: 1px solid rgba(103, 232, 249, 0.3);
+  color: #f8fbff;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
+}
+
+.account-avatar-img,
+.account-avatar-fallback {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  flex: 0 0 34px;
+}
+
+.account-avatar-img,
+.account-panel-avatar {
+  object-fit: cover;
+}
+
+.account-avatar-fallback,
+.account-panel-avatar-fallback {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #00f5ff, #7c3aed 55%, #ff2ef7);
+  color: #ffffff;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.account-trigger-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 800;
+}
+
+.account-trigger-icon {
+  width: 18px;
+  height: 18px;
+  color: #67e8f9;
+  flex: 0 0 auto;
+}
+
+.account-panel {
+  position: absolute;
+  top: calc(100% + 0.75rem);
+  right: 0;
+  width: min(360px, calc(100vw - 2rem));
+  padding: 1rem;
+  border-radius: 8px;
+  background: rgba(8, 13, 30, 0.98);
+  border: 1px solid rgba(103, 232, 249, 0.28);
+  box-shadow: 0 24px 80px rgba(0,0,0,.45), 0 0 30px rgba(0,245,255,.12);
+  backdrop-filter: blur(20px);
+  z-index: 200;
+}
+
+.account-panel-header,
+.account-panel-user,
+.account-actions {
+  display: flex;
+  align-items: center;
+}
+
+.account-panel-header {
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.account-panel-user {
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.account-panel-avatar {
+  width: 54px;
+  height: 54px;
+  border-radius: 8px;
+  flex: 0 0 54px;
+}
+
+.account-panel-user h3,
+.account-panel-user p {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-panel-user h3 {
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.account-panel-user p {
+  color: #c7d2fe;
+  font-size: 0.85rem;
+}
+
+.account-icon-button {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  color: #c7d2fe;
+  background: rgba(103, 232, 249, .1);
+}
+
+.account-icon-button svg,
+.account-form svg,
+.account-actions svg {
+  width: 17px;
+  height: 17px;
+}
+
+.account-form {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.account-form label {
+  display: grid;
+  gap: 0.4rem;
+  color: #c7d2fe;
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+
+.account-form label span {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.account-form input {
+  width: 100%;
+  min-height: 42px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  border: 1px solid rgba(103, 232, 249, .22);
+  background: rgba(3, 7, 18, .72);
+  color: #f8fbff;
+  padding: 0.65rem 0.75rem;
+  font: inherit;
+}
+
+.account-form input:disabled {
+  color: #aab8d8;
+  opacity: 0.85;
+}
+
+.account-form input:focus {
+  outline: none;
+  border-color: #67e8f9;
+  box-shadow: 0 0 0 3px rgba(0, 245, 255, .18);
+}
+
+.account-photo-picker {
+  min-height: 42px;
+  border-radius: 8px;
+  border: 1px dashed rgba(103, 232, 249, .42);
+  background: rgba(103, 232, 249, .08);
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem !important;
+  cursor: pointer;
+}
+
+.account-photo-picker-disabled {
+  cursor: default;
+  opacity: 0.75;
+}
+
+.account-photo-picker input {
+  display: none;
+}
+
+.account-actions {
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.account-edit-button,
+.account-save-button,
+.account-logout-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 40px;
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.account-edit-button,
+.account-save-button {
+  background: linear-gradient(135deg, #00f5ff, #7c3aed 55%, #ff2ef7);
+}
+
+.account-logout-button {
+  background: rgba(251, 113, 133, .16);
+  border: 1px solid rgba(251, 113, 133, .34);
+  color: #fecdd3;
+}
+
+.account-error {
+  color: #fda4af;
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 760px) {
+  .account-menu,
+  .account-trigger {
+    width: 100%;
+  }
+
+  .account-trigger {
+    max-width: none;
+    justify-content: flex-start;
+  }
+
+  .account-panel {
+    left: 0;
+    right: auto;
+    top: calc(100% + 0.5rem);
+  }
 }

@@ -1,173 +1,279 @@
-import React, { useState } from 'react';
-import './StoragePage.css';
+﻿import { useEffect, useMemo, useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { Check, Headphones, Lock, Palette, ShoppingBag, Sparkles, Star, Zap, Timer } from "lucide-react";
+import "./StoragePage.css";
 
-const storeItems = [
-  { id: 'classic-clock', name: 'Classic Clock', type: 'Clock Style', price: 150, image: '🕰️' },
-  { id: 'digital-clock', name: 'Digital Clock', type: 'Clock Style', price: 200, image: '📟' },
-  { id: 'nature-bg', name: 'Nature Theme', type: 'Theme', price: 300, image: '🏞️' },
-  { id: 'galaxy-bg', name: 'Galaxy Theme', type: 'Theme', price: 350, image: '🌌' },
-  { id: 'lofi-beats', name: 'Lofi Beats Pack', type: 'Playlist', price: 100, image: '🎧' },
-  { id: 'ambient-sound', name: 'Ambient Sounds', type: 'Playlist', price: 100, image: '🎶' },
-];
+const API_BASE = "http://localhost:3000/api";
+
+const categoryIcons = {
+  Theme: Palette,
+  Playlist: Headphones,
+  Booster: Zap,
+  Clock: Timer,
+};
 
 function StorePage() {
-  const [coins, setCoins] = useState(1000);
-  const [purchasedItems, setPurchasedItems] = useState(new Set(['classic-clock']));
-  const [equippedItems, setEquippedItems] = useState({
-    'Clock Style': 'classic-clock',
-    'Theme': '',
-    'Playlist': '',
-  });
-  const [songs, setSongs] = useState([]);
-  const [maxSongs, setMaxSongs] = useState(0);
-  const [newSongUrl, setNewSongUrl] = useState('');
+  const navigate = useNavigate();
+  const [items, setItems] = useState([]);
+  const [wallet, setWallet] = useState(0);
+  const [ownedItems, setOwnedItems] = useState([]);
+  const [equippedItems, setEquippedItems] = useState({ Theme: "", Playlist: "", Booster: "", Clock: "classic-clock" });
+  const [playlist, setPlaylist] = useState({ limit: 0, songs: [] });
+  const [newSongUrl, setNewSongUrl] = useState("");
+  const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [busyItemId, setBusyItemId] = useState("");
 
-  const handlePurchase = (item) => {
-    if (coins >= item.price) {
-      setCoins(coins - item.price);
-      setPurchasedItems(prev => new Set(prev).add(item.id));
+  const token = localStorage.getItem("token");
 
-      if (item.type === 'Playlist') setMaxSongs(prev => prev + 5);
+  const authHeaders = useMemo(() => ({
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  }), [token]);
 
-      alert(`You have successfully purchased ${item.name}!`);
-    } else {
-      alert("You don't have enough coins!");
+  useEffect(() => {
+    if (!token) {
+      navigate("/login");
+      return;
     }
+
+    const loadStore = async () => {
+      setIsLoading(true);
+      try {
+        const [itemsResponse, userStoreResponse] = await Promise.all([
+          fetch(`${API_BASE}/store/items`),
+          fetch(`${API_BASE}/store/me`, { headers: authHeaders }),
+        ]);
+        const itemsData = await itemsResponse.json();
+        const userStoreData = await userStoreResponse.json();
+
+        if (!itemsResponse.ok || !userStoreResponse.ok) {
+          setMessage(userStoreData.error || itemsData.error || "Could not load store.");
+          return;
+        }
+
+        setItems(itemsData.items);
+        setWallet(userStoreData.wallet);
+        setOwnedItems(userStoreData.ownedItems);
+        setEquippedItems(userStoreData.equippedItems);
+        setPlaylist(userStoreData.playlist);
+      } catch {
+        setMessage("Could not load store.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadStore();
+  }, [authHeaders, navigate, token]);
+
+  const groupedItems = items.reduce((groups, item) => {
+    groups[item.type] = groups[item.type] || [];
+    groups[item.type].push(item);
+    return groups;
+  }, {});
+
+  const updateStoreState = (data) => {
+    setWallet(data.wallet);
+    setOwnedItems(data.ownedItems);
+    setEquippedItems(data.equippedItems);
+    setPlaylist(data.playlist);
   };
 
-  const handleEquip = (item) => {
-    setEquippedItems({
-      ...equippedItems,
-      [item.type]: item.id,
-    });
-  };
+  const handlePurchase = async (item) => {
+    setBusyItemId(item.id);
+    setMessage("");
+    try {
+      const response = await fetch(`${API_BASE}/store/purchase`, {
+        method: "POST",
+        headers: authHeaders,
+        body: JSON.stringify({ itemId: item.id }),
+      });
+      const data = await response.json();
 
-  const handleAddSong = () => {
-    if (newSongUrl.trim() !== '') {
-      if (songs.length >= maxSongs) {
-        alert(`You have reached your playlist limit of ${maxSongs} songs. Buy more packs to add more!`);
+      if (!response.ok) {
+        setMessage(data.error || "Purchase failed.");
         return;
       }
 
-      // Extract Spotify track ID
-      let trackId = null;
-      if (newSongUrl.includes("open.spotify.com/track/")) {
-        const parts = newSongUrl.split("track/");
-        trackId = parts[1].split("?")[0];
-      }
-
-      if (trackId) {
-        const embedUrl = `https://open.spotify.com/embed/track/${trackId}`;
-        setSongs([...songs, embedUrl]);
-        setNewSongUrl('');
-      } else {
-        alert('Please enter a valid Spotify track URL.');
-      }
+      updateStoreState(data.store);
+      setMessage(`${item.name} added to your account.`);
+    } catch {
+      setMessage("Purchase failed.");
+    } finally {
+      setBusyItemId("");
     }
   };
 
-  // Dynamic background based on equipped theme
-  const getThemeBackground = () => {
-    if (equippedItems['Theme'] === 'nature-bg') return 'linear-gradient(to bottom, #0b3d0b, #2e7d32, #a5d6a7)'; // Amazon forest green
-    if (equippedItems['Theme'] === 'galaxy-bg') return 'linear-gradient(to bottom, #0f0c29, #302b63, #24243e)'; // Galaxy
-    return 'linear-gradient(120deg, #e0c3fc, #fbc2eb, #fffacd, #a6c1ee)'; // Default
+  const handleEquip = async (item) => {
+    setBusyItemId(item.id);
+    setMessage("");
+    try {
+      const response = await fetch(`${API_BASE}/store/equip`, {
+        method: "POST",
+        headers: authHeaders,
+        body: JSON.stringify({ itemId: item.id }),
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        setMessage(data.error || "Equip failed.");
+        return;
+      }
+
+      updateStoreState(data.store);
+      setMessage(`${item.name} equipped.`);
+    } catch {
+      setMessage("Equip failed.");
+    } finally {
+      setBusyItemId("");
+    }
+  };
+
+  const handleAddSong = async () => {
+    if (!newSongUrl.trim()) return;
+
+    setMessage("");
+    try {
+      const response = await fetch(`${API_BASE}/store/playlist`, {
+        method: "POST",
+        headers: authHeaders,
+        body: JSON.stringify({ songUrl: newSongUrl.trim() }),
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        setMessage(data.error || "Could not add song.");
+        return;
+      }
+
+      setPlaylist(data.playlist);
+      setNewSongUrl("");
+      setMessage("Track added to your playlist.");
+    } catch {
+      setMessage("Could not add song.");
+    }
   };
 
   return (
-    <>
-      <nav className="navbar glass-card">
-        <div className="nav-logo">ProdHack</div>
+    <div className="store-page-shell">
+      <nav className="navbar glass-card store-nav">
+        <NavLink to="/dashboard" className="nav-logo">ProdHack</NavLink>
         <ul className="nav-links">
-          <li><a href="#">Timer</a></li>
-          <li><a href="#">Store</a></li>
-          <li><a href="#">Profile</a></li>
+          <li><NavLink to="/dashboard">Dashboard</NavLink></li>
+          <li><NavLink to="/theme-store">Store</NavLink></li>
+          <li><NavLink to="/leaderboard">Leaderboard</NavLink></li>
         </ul>
-        <div className="nav-coins">
-          <span>💎</span> {coins}
-        </div>
+        <div className="nav-coins"><Sparkles size={16} /> {wallet} XP</div>
       </nav>
 
-      <div className="store-container" style={{ background: getThemeBackground(), transition: 'all 0.5s ease' }}>
-        <h1 className="store-title">Welcome to the Store</h1>
+      <main className="store-container">
+        <section className="store-hero-panel">
+          <div>
+            <p className="store-kicker">Account Store</p>
+            <h1 className="store-title">Theme Store</h1>
+            <p className="store-subtitle">Buy themes, playlist extenders, and focus boosts. Your owned items load automatically after login.</p>
+          </div>
+          <div className="owned-summary glass-card">
+            <ShoppingBag />
+            <span>{ownedItems.length} owned</span>
+          </div>
+        </section>
 
-        <div className="items-grid">
-          {storeItems.map((item) => {
-            const isPurchased = purchasedItems.has(item.id);
-            const isEquipped = equippedItems[item.type] === item.id;
+        {message && <div className="store-message glass-card">{message}</div>}
+        {isLoading && <div className="store-message glass-card">Loading your store...</div>}
 
-            return (
-              <div
-                key={item.id}
-                className={`item-card glass-card ${isEquipped ? 'equipped-card' : ''}`}
-              >
-                {isPurchased && item.type === 'Playlist' && (
-                  <div className="purchased-badge">Purchased</div>
-                )}
-                <div style={{ fontSize: '4rem', margin: '10px 0' }}>{item.image}</div>
-                <h3 className="item-name">{item.name}</h3>
-                <p className="item-type">{item.type}</p>
+        {Object.entries(groupedItems).map(([type, typeItems]) => {
+          const Icon = categoryIcons[type] || ShoppingBag;
 
-                {isPurchased ? (
-                  <button
-                    onClick={() => handleEquip(item)}
-                    className={`btn equip-button ${isEquipped ? 'equipped' : ''}`}
-                  >
-                    {isEquipped ? 'Equipped' : 'Equip'}
-                  </button>
-                ) : (
-                  <button onClick={() => handlePurchase(item)} className="btn buy-button">
-                    Buy for {item.price} 💎
-                  </button>
-                )}
+          return (
+            <section className="store-section" key={type}>
+              <div className="store-section-heading">
+                <Icon />
+                <h2>{type}</h2>
               </div>
-            );
-          })}
-        </div>
+              <div className="items-grid">
+                {typeItems.map((item) => {
+                  const isOwned = ownedItems.includes(item.id);
+                  const isEquipped = equippedItems[item.type] === item.id;
+                  const isBusy = busyItemId === item.id;
 
-        <div className="playlist-section glass-card">
-          <h2 className="store-title" style={{ fontSize: '28px', margin: '0 0 20px 0' }}>Your Playlist</h2>
-          
+                  return (
+                    <article key={item.id} className={`item-card glass-card ${isEquipped ? "equipped-card" : ""}`}>
+                      <div
+                        className="item-preview"
+                        style={item.timerTheme ? {
+                          background: item.timerTheme.background,
+                          color: item.timerTheme.timerColor,
+                        } : undefined}
+                      >
+                        <span className="item-icon">{item.badge}</span>
+                        {item.timerTheme && (
+                          <span
+                            className="preview-accent"
+                            style={{ background: item.timerTheme.accentColor }}
+                          />
+                        )}
+                      </div>
+                      <h3 className="item-name">{item.name}</h3>
+                      <p className="item-type">{item.description}</p>
+                      <div className="item-perks">
+                        {(item.features || [
+                          item.type === "Playlist" ? "More saved tracks" : "Premium visual skin",
+                          item.type === "Booster" ? "Profile flex item" : "Battle-ready style",
+                        ]).slice(0, 3).map((feature) => (
+                          <span key={feature}><Star size={12} /> {feature.replace(/-/g, " ")}</span>
+                        ))}
+                      </div>
+                      <p className="item-price">{item.price} XP</p>
+
+                      {isOwned ? (
+                        <button
+                          className={`btn equip-button ${isEquipped ? "equipped" : ""}`}
+                          onClick={() => handleEquip(item)}
+                          disabled={isBusy || isEquipped}
+                        >
+                          {isEquipped ? <><Check size={16} /> Equipped</> : "Equip"}
+                        </button>
+                      ) : (
+                        <button className="btn buy-button" onClick={() => handlePurchase(item)} disabled={isBusy}>
+                          {isBusy ? "Buying..." : <><Lock size={16} /> Buy</>}
+                        </button>
+                      )}
+                    </article>
+                  );
+                })}
+              </div>
+            </section>
+          );
+        })}
+
+        <section className="playlist-section glass-card">
+          <h2 className="store-title playlist-title">Your Playlist</h2>
           <div className="spotify-input-container">
             <input
               type="text"
               placeholder="Paste a Spotify track URL here..."
               value={newSongUrl}
-              onChange={(e) => setNewSongUrl(e.target.value)}
+              onChange={(event) => setNewSongUrl(event.target.value)}
             />
             <button className="btn add-song-btn" onClick={handleAddSong}>Add Song</button>
           </div>
-
           <div className="playlist-count-bar">
-            <div
-              className="playlist-count-progress"
-              style={{ width: `${(songs.length / (maxSongs || 1)) * 100}%` }}
-            ></div>
+            <div className="playlist-count-progress" style={{ width: `${Math.min(100, (playlist.songs.length / Math.max(playlist.limit, 1)) * 100)}%` }}></div>
           </div>
-          <p>Playlist: {songs.length} / {maxSongs} songs</p>
-
+          <p>Playlist: {playlist.songs.length} / {playlist.limit} songs</p>
           <ul className="song-list">
-            {songs.length > 0 ? (
-              songs.map((songUrl, index) => (
-                <li key={index}>
-                  <iframe
-                    src={songUrl}
-                    title={`song-${index}`}
-                    frameBorder="0"
-                    allow="encrypted-media"
-                    allowTransparency="true"
-                    allowFullScreen
-                  ></iframe>
-                </li>
-              ))
-            ) : (
-              <p>Your playlist is empty. Add some songs!</p>
-            )}
+            {playlist.songs.length > 0 ? playlist.songs.map((songUrl) => (
+              <li key={songUrl}>{songUrl}</li>
+            )) : <li>Your playlist is empty. Buy a playlist extender to unlock more slots.</li>}
           </ul>
-        </div>
-      </div>
-    </>
+        </section>
+      </main>
+    </div>
   );
 }
 
 export default StorePage;
+
 

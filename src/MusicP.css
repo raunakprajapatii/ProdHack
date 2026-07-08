@@ -58,3 +58,16 @@
   color: #953ec4;
   
 }
+
+/* Neon compact player */
+.music-player {
+  background: rgba(8, 13, 30, .9);
+  border: 1px solid rgba(103, 232, 249, .24);
+  border-radius: 8px;
+  box-shadow: 0 18px 50px rgba(0,0,0,.38), 0 0 22px rgba(0,245,255,.14);
+  color: #f8fbff;
+}
+.music-player:hover { width: 188px; }
+.music-icon { color: #67e8f9; }
+.player-controls button { color: #e5edff; }
+.player-controls button:hover { color: #ff8bf9; }

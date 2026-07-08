@@ -240,6 +240,36 @@ export default function PomodoroTimer() {
 
                 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
                 @keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+                /* Neon timer refresh */
+                .pomodoro-container {
+                    background: radial-gradient(circle at 20% 12%, rgba(0,245,255,.26), transparent 28%), radial-gradient(circle at 82% 72%, rgba(255,46,247,.22), transparent 30%), linear-gradient(135deg, #050712, #0c1024 52%, #16071f);
+                    color: #f8fbff;
+                }
+                .pomodoro-card {
+                    background: rgba(8, 13, 30, .86);
+                    border: 1px solid rgba(103,232,249,.24);
+                    border-radius: 8px;
+                    box-shadow: 0 24px 90px rgba(0,0,0,.42), 0 0 30px rgba(0,245,255,.12);
+                }
+                .pomodoro-title, .modal-title {
+                    font-family: 'Orbitron', 'Inter', sans-serif;
+                    color: #ffffff;
+                    letter-spacing: 0;
+                }
+                .mode-selector { background: rgba(3,7,18,.66); border-radius: 8px; border: 1px solid rgba(103,232,249,.18); }
+                .mode-btn { color: #c7d2fe; border-radius: 8px; }
+                .mode-btn.active { background: linear-gradient(135deg, rgba(0,245,255,.22), rgba(255,46,247,.18)); color: #ffffff; box-shadow: 0 0 20px rgba(0,245,255,.14); }
+                .timer-circle-bg { stroke: rgba(255,255,255,.1); }
+                .time-left { color: #f8fbff; text-shadow: 0 0 24px rgba(0,245,255,.26); }
+                .btn-primary { background: linear-gradient(135deg, #00f5ff, #7c3aed 55%, #ff2ef7); border-radius: 8px; }
+                .btn-secondary { border-color: rgba(103,232,249,.72); color: #67e8f9; border-radius: 8px; }
+                .settings-btn { color: #67e8f9; }
+                .pomodoro-counter { color: #c7d2fe; }
+                .completed-mark { background: rgba(0,245,255,.15); color: #67e8f9; }
+                .modal-content { background: #0c1024; color: #f8fbff; border: 1px solid rgba(103,232,249,.24); border-radius: 8px; }
+                .form-group label { color: #c7d2fe; }
+                .form-group input { background: rgba(3,7,18,.72); color: #f8fbff; border-color: rgba(103,232,249,.22); border-radius: 8px; }
             `}</style>
 
             {isSettingsOpen && <SettingsModal settings={settings} onSave={handleSaveSettings} onClose={() => setIsSettingsOpen(false)} />}
@@ -249,7 +279,7 @@ export default function PomodoroTimer() {
                     <button className="settings-btn" onClick={() => setIsSettingsOpen(true)} aria-label="Open settings">
                         <SettingsIcon />
                     </button>
-                    <h1 className="pomodoro-title">Pomodoro Timer</h1>
+                    <h1 className="pomodoro-title">Focus Quest</h1>
                     <div className="mode-selector">
                         <button className={`mode-btn ${mode === 'pomodoro' ? 'active' : ''}`} onClick={() => switchMode('pomodoro')}>
                             Pomodoro
@@ -301,3 +331,4 @@ export default function PomodoroTimer() {
         </>
     );
 }
+

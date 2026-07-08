@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fredericka+the+Great&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredericka+the+Great&family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@600;700;800&display=swap');
 
 /* ✅ FIXED: Scope the font to only login page elements */
 .login-container,
@@ -309,3 +309,67 @@
   width: auto;
   object-fit: contain;
 }
+/* Neon auth refresh */
+
+.login-container,
+.login-container * {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: initial;
+}
+
+.login-container {
+  background:
+    radial-gradient(circle at 20% 15%, rgba(0, 245, 255, .28), transparent 28%),
+    radial-gradient(circle at 82% 78%, rgba(255, 46, 247, .25), transparent 30%),
+    linear-gradient(135deg, #050712, #0c1024 52%, #16071f);
+  color: #f8fbff;
+}
+
+.login-wrapper { max-width: 30rem; }
+.login-header-box {
+  background: rgba(8, 13, 30, 0.84);
+  border: 1px solid rgba(103, 232, 249, 0.22);
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 24px 90px rgba(0, 0, 0, .42), 0 0 34px rgba(0, 245, 255, .12);
+  backdrop-filter: blur(18px);
+}
+.login-title {
+  font-family: 'Orbitron', 'Inter', sans-serif;
+  color: #ffffff;
+  font-size: 2rem;
+  letter-spacing: 0;
+}
+.login-subtitle, .toggle-text, .checkbox-label, .login-label { color: #c7d2fe; }
+.logo-img { filter: drop-shadow(0 0 18px rgba(0,245,255,.4)); }
+.input-field {
+  background: rgba(3, 7, 18, .72);
+  border: 1px solid rgba(103, 232, 249, .22);
+  color: #f8fbff;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+.input-field:focus { box-shadow: 0 0 0 3px rgba(0, 245, 255, .18), 0 0 22px rgba(0,245,255,.16); border-color: #67e8f9; }
+.icon-input, .icon-toggle { color: #67e8f9; }
+.password-toggle-btn { background: rgba(103, 232, 249, .12); border-radius: 8px; }
+.password-toggle-btn:hover { background: rgba(255, 46, 247, .14); }
+.submit-button {
+  border-radius: 8px;
+  background: linear-gradient(135deg, #00f5ff, #7c3aed 55%, #ff2ef7);
+  color: white;
+  font-size: 1rem;
+  font-weight: 800;
+  box-shadow: 0 0 24px rgba(0, 245, 255, .24);
+}
+.submit-button:hover { background: linear-gradient(135deg, #67e8f9, #8b5cf6 55%, #ff7af7); }
+.toggle-button, .forgot-password-btn { color: #67e8f9; }
+.toggle-button:hover, .forgot-password-btn:hover { color: #ff8bf9; }
+.input-error { border-color: #fb7185; background: rgba(127, 29, 29, .3); }
+.input-error-text { color: #fda4af; font-size: .8rem; }
+.spinner { border-top-color: #67e8f9; }
+
+@media (max-width: 520px) {
+  .login-header-box { padding: 1.25rem; }
+  .login-remember-forgot { align-items: flex-start; gap: .75rem; flex-direction: column; }
+}
+

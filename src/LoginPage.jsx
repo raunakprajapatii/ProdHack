@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { Eye, EyeOff,Lock, Mail, User } from 'lucide-react';
+﻿import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Eye, EyeOff, Lock, Mail, User } from 'lucide-react';
 import './LoginPage.css';
-import { Navigate, redirect } from 'react-router-dom';
-
-
+import logo from './assets/logo.svg';
 
 export default function LoginPage() {
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -16,7 +16,6 @@ export default function LoginPage() {
     confirmPassword: ''
   });
   const [errors, setErrors] = useState({});
- 
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -24,7 +23,6 @@ export default function LoginPage() {
       ...prev,
       [name]: value
     }));
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -35,23 +33,20 @@ export default function LoginPage() {
 
   const validateForm = () => {
     const newErrors = {};
-
-    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (!formData.email) {
       newErrors.email = 'Email is required';
     } else if (!emailRegex.test(formData.email)) {
       newErrors.email = 'Please enter a valid email';
     }
 
-    // Password validation
     if (!formData.password) {
       newErrors.password = 'Password is required';
     } else if (formData.password.length < 6) {
       newErrors.password = 'Password must be at least 6 characters';
     }
 
-    // Additional validation for signup
     if (!isLogin) {
       if (!formData.name) {
         newErrors.name = 'Name is required';
@@ -69,52 +64,34 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     setIsLoading(true);
-    
+
     try {
-      if (isLogin) {
-        // Login API call
-        const response = await fetch('http://localhost:3000/api/auth/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            email: formData.email,
-            password: formData.password
-          })
-        });
-        const data = await response.json();
-        if (response.ok) {
-          localStorage.setItem('token', data.token);
-          alert('Login successful!');
-        } else {
-          alert(data.error || 'Login failed');
-        }
+      const endpoint = isLogin ? 'login' : 'signup';
+      const body = isLogin
+        ? { email: formData.email, password: formData.password }
+        : { name: formData.name, email: formData.email, password: formData.password };
+
+      const response = await fetch(`http://localhost:3000/api/auth/${endpoint}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      });
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        navigate('/dashboard');
       } else {
-        // Signup API call
-        const response = await fetch('http://localhost:3000/api/auth/signup', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            name: formData.name,
-            email: formData.email,
-            password: formData.password
-          })
-        });
-        const data = await response.json();
-        if (response.ok) {
-          alert('Account created successfully!');
-        } else {
-          alert(data.error || 'Signup failed');
-        }
+        alert(data.error || `${isLogin ? 'Login' : 'Signup'} failed`);
       }
-    } catch (error) {
+    } catch {
       alert('An error occurred. Please try again.');
     } finally {
       setIsLoading(false);
@@ -136,24 +113,22 @@ export default function LoginPage() {
     <div className="login-container">
       <div className="login-wrapper">
         <div className="login-header-box">
-          {/* Header */}
           <div className="login-header">
             <div className="login-logo">
-              <img src="/src/assets/logo.svg" alt="ProdHack Logo" className="logo-img" />
+              <img src={logo} alt="ProdHack Logo" className="logo-img" />
             </div>
             <h2 className="login-title">
-              {isLogin ? 'ProdHack' : 'Create account'}
+              {isLogin ? 'Enter the Arena' : 'Create Player ID'}
             </h2>
             <p className="login-subtitle">
-              {isLogin 
-                ? 'Please sign in to your account' 
-                : 'Please fill in your information'
+              {isLogin
+                ? 'Sign in and keep your focus streak alive.'
+                : 'Build your profile and start earning XP.'
               }
             </p>
           </div>
 
           <div className="login-form-fields">
-            {/* Name field for signup */}
             {!isLogin && (
               <div>
                 <label htmlFor="name" className="login-label">
@@ -177,7 +152,6 @@ export default function LoginPage() {
               </div>
             )}
 
-            {/* Email field */}
             <div>
               <label htmlFor="email" className="login-label">
                 Email Address
@@ -199,7 +173,6 @@ export default function LoginPage() {
               {errors.email && <p className="input-error-text">{errors.email}</p>}
             </div>
 
-            {/* Password field */}
             <div>
               <label htmlFor="password" className="login-label">
                 Password
@@ -232,7 +205,6 @@ export default function LoginPage() {
               {errors.password && <p className="input-error-text">{errors.password}</p>}
             </div>
 
-            {/* Confirm Password field for signup */}
             {!isLogin && (
               <div>
                 <label htmlFor="confirmPassword" className="login-label">
@@ -256,7 +228,6 @@ export default function LoginPage() {
               </div>
             )}
 
-            {/* Remember me / Forgot password */}
             {isLogin && (
               <div className="login-remember-forgot">
                 <div className="remember-me">
@@ -279,7 +250,6 @@ export default function LoginPage() {
             )}
           </div>
 
-          {/* Submit button */}
           <div className="submit-button-wrapper">
             <button
               type="submit"
@@ -298,7 +268,6 @@ export default function LoginPage() {
             </button>
           </div>
 
-          {/* Toggle between login/signup */}
           <div className="toggle-login-signup">
             <span className="toggle-text">
               {isLogin ? "Don't have an account? " : "Already have an account? "}
