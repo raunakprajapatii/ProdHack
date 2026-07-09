@@ -82,23 +82,55 @@
  const User = mongoose.model('User', UserSchema); 
 
  // 3. MIDDLEWARE 
- const localOrigins = ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174'];
- const deployedOrigins = (process.env.CLIENT_ORIGIN || '')
+ const normalizeOrigin = (origin) => origin.replace(/\/$/, '');
+ const wildcardToRegex = (origin) => new RegExp(`^${normalizeOrigin(origin)
+   .replace(/[.+?^${}()|[\]\\]/g, '\\$&')
+   .replace(/\\\*/g, '[^.]+')}$`);
+
+ const configuredOrigins = (process.env.CLIENT_ORIGIN || '')
    .split(',')
    .map((origin) => origin.trim())
    .filter(Boolean);
- const allowedOrigins = [...localOrigins, ...deployedOrigins];
+ const localOrigins = ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174'];
+ const exactOrigins = [...localOrigins, ...configuredOrigins.filter((origin) => !origin.includes('*'))]
+   .map(normalizeOrigin);
+ const wildcardOrigins = configuredOrigins
+   .filter((origin) => origin.includes('*'))
+   .map(wildcardToRegex);
 
- app.use(cors({ 
-   origin: allowedOrigins, 
-   credentials: true 
- })); 
+ const isAllowedOrigin = (origin) => {
+   if (!origin) return true;
+   const normalizedOrigin = normalizeOrigin(origin);
+   return exactOrigins.includes(normalizedOrigin)
+     || wildcardOrigins.some((pattern) => pattern.test(normalizedOrigin));
+ };
+
+ const corsOptions = {
+   origin(origin, callback) {
+     if (isAllowedOrigin(origin)) {
+       callback(null, true);
+       return;
+     }
+
+     callback(new Error(`CORS blocked origin: ${origin}`));
+   },
+   credentials: true
+ };
+
+ app.use(cors(corsOptions)); 
  app.use(express.json({ limit: '2mb' })); 
 
  // 4. SOCKET.IO SETUP 
  const io = new Server(server, { 
    cors: { 
-     origin: allowedOrigins, 
+     origin(origin, callback) {
+       if (isAllowedOrigin(origin)) {
+         callback(null, true);
+         return;
+       }
+
+       callback(new Error(`Socket CORS blocked origin: ${origin}`));
+     }, 
      methods: ['GET', 'POST'], 
      credentials: true 
    } 
