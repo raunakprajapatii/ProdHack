@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Lock, Mail, User } from 'lucide-react';
 import './LoginPage.css';
 import logo from './assets/logo.svg';
+import { API_BASE_URL } from './config/api';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -75,7 +76,7 @@ export default function LoginPage() {
         ? { email: formData.email, password: formData.password }
         : { name: formData.name, email: formData.email, password: formData.password };
 
-      const response = await fetch(`http://localhost:3000/api/auth/${endpoint}`, {
+      const response = await fetch(`${API_BASE_URL}/auth/${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

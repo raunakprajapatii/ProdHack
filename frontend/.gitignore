@@ -1,14 +1,10 @@
 # Dependencies
 node_modules/
-**/node_modules/
 
 # Build output and caches
 dist/
-**/dist/
 dist-ssr/
-**/dist-ssr/
 .vite/
-**/.vite/
 
 # Logs
 logs/
@@ -33,6 +29,6 @@ lerna-debug.log*
 Thumbs.db
 *.suo
 *.ntvs*
-*.njsproj
+*.njsproj*
 *.sln
 *.sw?

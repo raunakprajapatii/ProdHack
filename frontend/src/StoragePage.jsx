@@ -2,8 +2,9 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { Check, Headphones, Lock, Palette, ShoppingBag, Sparkles, Star, Zap, Timer } from "lucide-react";
 import "./StoragePage.css";
+import { API_BASE_URL } from "./config/api";
 
-const API_BASE = "http://localhost:3000/api";
+const API_BASE = API_BASE_URL;
 
 const categoryIcons = {
   Theme: Palette,

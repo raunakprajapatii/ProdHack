@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import io from 'socket.io-client';
 import './One.css';
+import { API_BASE_URL, API_ORIGIN } from './config/api';
 
 // Store items - duplicated from backend for client-side theme matching
 const storeItems = [
@@ -134,7 +135,7 @@ const storeItems = [
 ];
 
 // Connect to the backend server
-const socket = io("http://localhost:3000", {
+const socket = io(API_ORIGIN, {
   transports: ['websocket'],
   upgrade: false,
 });
@@ -257,13 +258,13 @@ export default function OneOne() {
         if (!token) return;
 
         const [response, itemsResponse] = await Promise.all([
-          fetch('http://localhost:3000/api/store/me', {
+          fetch(`${API_BASE_URL}/store/me`, {
             headers: {
               'Content-Type': 'application/json',
               Authorization: `Bearer ${token}`,
             },
           }),
-          fetch('http://localhost:3000/api/store/items'),
+          fetch(`${API_BASE_URL}/store/items`),
         ]);
 
         const itemsData = itemsResponse.ok ? await itemsResponse.json() : null;
@@ -540,7 +541,7 @@ export default function OneOne() {
 
     try {
       console.log('📤 Uploading PDF for analysis...');
-      const response = await fetch('http://localhost:3000/api/analyze-pdf', {
+      const response = await fetch(`${API_BASE_URL}/analyze-pdf`, {
         method: 'POST',
         body: formData
       });
@@ -742,7 +743,7 @@ export default function OneOne() {
 
     const claimReward = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/battle/reward', {
+        const response = await fetch(`${API_BASE_URL}/battle/reward`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

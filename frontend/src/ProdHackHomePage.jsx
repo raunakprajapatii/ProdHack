@@ -20,6 +20,7 @@ import {
 import logo from "./assets/logo.svg";
 import "./ProdHackHomePage.css";
 import MusicPlayer from "./Music";
+import { API_BASE_URL } from "./config/api";
 
 const featuresData = [
   { icon: Timer, title: "Smart Timer Sessions", description: "Pomodoro technique enhanced with AI-powered break suggestions and focus optimization.", color: "feature-pink" },
@@ -74,7 +75,7 @@ export default function ProdHackHomePage() {
 
     const fetchProfile = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/auth/profile", {
+        const response = await fetch(`${API_BASE_URL}/auth/profile`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -161,7 +162,7 @@ export default function ProdHackHomePage() {
     setAccountError("");
 
     try {
-      const response = await fetch("http://localhost:3000/api/auth/profile", {
+      const response = await fetch(`${API_BASE_URL}/auth/profile`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

@@ -2,6 +2,7 @@
 import { NavLink } from "react-router-dom";
 import { Medal, Trophy, Users } from "lucide-react";
 import "./LeaderboardPage.css";
+import { API_BASE_URL } from "./config/api";
 
 function LeaderboardPage() {
   const [players, setPlayers] = useState([]);
@@ -11,7 +12,7 @@ function LeaderboardPage() {
   useEffect(() => {
     const loadLeaderboard = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/leaderboard");
+        const response = await fetch(`${API_BASE_URL}/leaderboard`);
         const data = await response.json();
 
         if (!response.ok) {
